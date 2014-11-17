@@ -114,7 +114,7 @@ function setup() {
 function match() {
 
     jsdom.env({
-        url: "https://www.apple.com/de/itunes/charts/songs/",
+        url: "https://www.apple.com/de/itunes/charts/songs/", // should also work with other countried
         scripts: ["http://code.jquery.com/jquery.js"],
         done: function (errors, window) {
             var $ = window.$;
@@ -160,7 +160,7 @@ function getRdioAccess(callback) {
                                    results) {
         console.log("Please open: https://www.rdio.com/oauth/authorize?oauth_token="
                     + oauthToken + 
-                    " and allow mmirror to access your account. Enter the shown PIN below.");
+                    " and allow the app to access your account. Enter the shown PIN below.");
         readline.question("PIN: ", function(oauthVerifier) {
             rdio.getAccessToken(oauthToken,
                                 oauthTokenSecret, 
