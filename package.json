@@ -1,0 +1,14 @@
+{
+  	"name": "itunes-charts-rdio-mirror",
+  	"version": "0.1.0",
+  	"author": "Luis Gerhorst <luis@luisgerhorst.de>",
+    "dependencies": {
+        "rdio": "~1.5.2",
+        "jsdom": "~1.2.1",
+        "request": "~2.47.0"
+  	},
+  	"repository": {
+  	  "type": "git",
+  	  "url": "https://github.com/luisgerhorst/itunes-charts-rdio-mirror"
+  	}
+}

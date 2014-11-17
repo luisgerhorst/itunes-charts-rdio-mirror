@@ -1,0 +1,7 @@
+{
+	"playlistName": "iTunes Charts",
+	"rdioAPIKey": "YOUR_RDIO_API_KEY",
+	"rdioAPIShared": "YOUR_RDIO_SHARED_SECRET",
+	"echonestAPIKey": "YOUR_ECHONEST_API_KEY",
+	"tasteProfileName": "itunes_charts"
+}
