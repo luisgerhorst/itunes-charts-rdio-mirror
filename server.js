@@ -47,7 +47,7 @@ function setup() {
 
     function updateConfig() {
         if (configChanged) {
-	        fs.writeFile("config.json", JSON.stringify(config, null, "\t"), function (err) {
+            fs.writeFile("config.json", JSON.stringify(config, null, "\t"), function (err) {
                 if (err) {
                     throw ["config.json could not be updated.", err];
                 }
@@ -117,8 +117,9 @@ function match() {
         url: "https://www.apple.com/de/itunes/charts/songs/", // should also work with other countried
         scripts: ["http://code.jquery.com/jquery.js"],
         done: function (errors, window) {
+            
             var $ = window.$;
-
+            
             var songs = [];
             function Song(name, artist) {
                 this.song_name = name;
@@ -130,13 +131,14 @@ function match() {
             });
 
             var uniqSongs = uniq(songs);
+            console.log("iTunes Charts: " + JSON.stringify(uniqSongs));
             updateTasteProfileOrdered(config.tasteProfileID, uniqSongs, function () {
                 readOrderedRdioKeysFromTasteProfile(config.tasteProfileID,
-                                             function (rdioKeys) {
-                                                 updatePlaylist(config.playlistKey, rdioKeys, function () {
-                                                     process.exit(0);
-                                                 });
-                                             });
+                                                    function (rdioKeys) {
+                                                        updatePlaylist(config.playlistKey, rdioKeys, function () {
+                                                            process.exit(0);
+                                                        });
+                                                    });
             });
 
             function uniq(a) {
@@ -184,7 +186,7 @@ function createTasteProfile(name, callback) {
         if (res.response.status.code == 5) {
             callback(res.response.status.id);
         } else {
-	        callback(res.response.id);
+            callback(res.response.id);
         }
     });
 }
@@ -194,34 +196,34 @@ function createTasteProfile(name, callback) {
 function updateTasteProfileOrdered(tasteProfileID, songs, callback) {
     readTasteProfile(tasteProfileID, function (oldSongs) {
         emptyTasteProfile(tasteProfileID, oldSongs, function (emptyTicket) {
-	        onTicketFinish(emptyTicket, function () {
-		        fillTasteProfileOrdered(tasteProfileID, songs, function (fillTicket) {
-			        onTicketFinish(fillTicket, callback);
-		        });
-	        });
+            onTicketFinish(emptyTicket, function () {
+                fillTasteProfileOrdered(tasteProfileID, songs, function (fillTicket) {
+                    onTicketFinish(fillTicket, callback);
+                });
+            });
         });
     });
-	
+    
     function readTasteProfile(tasteProfileID, callback, items, iteration) {
-	    var chunkSize = 300; // don't waste requests (limited to 20 calls / minute)
+        var chunkSize = 300; // don't waste requests (limited to 20 calls / minute)
 
-	    if (items === undefined && iteration === undefined) {
-		    items = [];
-		    iteration = 0;
-	    } else {
-		    iteration++;
-	    }
-	    
+        if (items === undefined && iteration === undefined) {
+            items = [];
+            iteration = 0;
+        } else {
+            iteration++;
+        }
+        
         echonestGETAPIRequest("tasteprofile/read", {
             "id": tasteProfileID,
-	        "start": iteration * chunkSize,
-	        "results": chunkSize
+            "start": iteration * chunkSize,
+            "results": chunkSize
         }, function (res) {
-	        var total = res.response.catalog.total;
-	        var receivedItems = res.response.catalog.items;
-	        var allItems = items.concat(receivedItems);
-	        if (allItems.length == total) callback(allItems);
-	        else readTasteProfile(tasteProfileID, callback, allItems, iteration);
+            var total = res.response.catalog.total;
+            var receivedItems = res.response.catalog.items;
+            var allItems = items.concat(receivedItems);
+            if (allItems.length == total) callback(allItems);
+            else readTasteProfile(tasteProfileID, callback, allItems, iteration);
         });
     }
 
@@ -289,32 +291,32 @@ function updateTasteProfileOrdered(tasteProfileID, songs, callback) {
 }
 
 function readOrderedRdioKeysFromTasteProfile(tasteProfileID, callback, items, iteration) {
-	var chunkSize = 300; // don't waste requests (limited to 20 calls / minute)
-	
-	if (items === undefined && iteration === undefined) {
-		items = [];
-		iteration = 0;
-	} else {
-		iteration++;
-	}
-	
+    var chunkSize = 300; // don't waste requests (limited to 20 calls / minute)
+    
+    if (items === undefined && iteration === undefined) {
+        items = [];
+        iteration = 0;
+    } else {
+        iteration++;
+    }
+    
     echonestGETAPIRequest("tasteprofile/read", {
         "id": tasteProfileID,
-	    "start": iteration * chunkSize,
-	    "results": chunkSize,
+        "start": iteration * chunkSize,
+        "results": chunkSize,
         "bucket": ["id:rdio-DE",
                    "tracks",
                    "item_keyvalues"]
     }, function (res) {
-	    var total = res.response.catalog.total;
-	    var receivedItems = res.response.catalog.items;
-	    var allItems = items.concat(receivedItems);
-	    if (allItems.length == total) callback(extractKeys(allItems));
-	    else readOrderedRdioKeysFromTasteProfile(tasteProfileID, callback, allItems, iteration);
+        var total = res.response.catalog.total;
+        var receivedItems = res.response.catalog.items;
+        var allItems = items.concat(receivedItems);
+        if (allItems.length == total) callback(extractKeys(allItems));
+        else readOrderedRdioKeysFromTasteProfile(tasteProfileID, callback, allItems, iteration);
     });
 
     function extractKeys(items) {
-	    return items
+        return items
             .sort(function (a, b) {
                 return a.item_keyvalues.index - b.item_keyvalues.index;
             })
@@ -330,7 +332,6 @@ function readOrderedRdioKeysFromTasteProfile(tasteProfileID, callback, items, it
                 if (item === null) return false;
                 else return true;
             });
-	    
     }
 }
 
